@@ -129,19 +129,19 @@ class HTML2TEXT
      *
      * @param string $str
      * @param array $options an array with the following keys an values:
-     *      tab: a string of chars that will be used like a "tab". The default
-     *      value is "   " (\t may be another standard option)
+     *      bold: a string of chars that will wrap text in <b> or <strong>. The
+     *      default value is an empty string.
      *      cellSeparator: a string of chars used to separate content between
      *      contiguous cells in a row. Default value is " || " (\t may be also
      *      a sensible choice)
-     *      italics: a string of chars that will wrap text in <i> or <em>. The
-     *      default value is an empty string.
-     *      bold: a string of chars that will wrap text in <b> or <strong>. The
-     *      default value is an empty string.
      *      images: if set to true the alt value associated to the image will
      *      be printed like [img: alt value]. Default value is true.
+     *      italics: a string of chars that will wrap text in <i> or <em>. The
+     *      default value is an empty string.
      *      newLine: if set it will replace the default value (\n\r) for titles
      *      and paragraphs.
+     *      tab: a string of chars that will be used like a "tab". The default
+     *      value is "   " (\t may be another standard option)
      * 
      */
     public function __construct($str, $options = array()) {
