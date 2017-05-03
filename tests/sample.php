@@ -1,10 +1,11 @@
 <?php
+
 require __DIR__ . '/../vendor/autoload.php';
 
 use Docxpresso\HTML2TEXT as Parser;
 
 $html = '
-<p>A simple paragraph followe by an ordered list:</p>
+<p>A simple paragraph followed by an ordered list:</p>
 <ol>
     <li>One item
         <ol>

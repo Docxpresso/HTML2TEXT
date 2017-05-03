@@ -94,6 +94,14 @@ class HTML2TEXT
     private $_listType;
     
     /**
+     * the new line type for paragraphs 
+     * 
+     * @var string
+     * @access private
+     */
+    private $_newLine;
+    
+    /**
      * HTML string to be converted
      * 
      * @var string
@@ -132,12 +140,21 @@ class HTML2TEXT
      *      default value is an empty string.
      *      images: if set to true the alt value associated to the image will
      *      be printed like [img: alt value]. Default value is true.
+     *      newLine: if set it will replace the default value (\n\r) for titles
+     *      and paragraphs.
+     * 
      */
     public function __construct($str, $options = array()) {
        	$this->_str = $str;
       	$this->_text = '';
         $this->_list = array();
         $this->_listType = array();
+        $this->_newLine = PHP_EOL;
+        if (isset($options['newLine'])) {
+            $this->_newLine = $options['newLine'];
+        } else {
+            $this->_newLine = PHP_EOL;
+        }
         if (isset($options['tab'])) {
             $this->_tab = $options['tab'];
         } else {
@@ -366,7 +383,7 @@ class HTML2TEXT
                     $numChars = strlen($node->nodeValue);
                     $this->_text .= PHP_EOL;
                     $this->_text .= str_repeat("=", $numChars);
-                    $this->_text .= PHP_EOL;
+                    $this->_text .= $this->_newLine;
                     break;
                 case 'i':
                 case 'em':
@@ -419,7 +436,7 @@ class HTML2TEXT
                         ($nested->nodeName == 'td' || $nested->nodeName == 'th' || $nested->nodeName == 'li')) {
                         //do not add a carriage return
                     } else {
-                        $this->_text .= PHP_EOL;
+                        $this->_text .= $this->_newLine;
                     }
                     break;
                 case 'td':
