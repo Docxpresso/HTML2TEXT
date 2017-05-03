@@ -34,3 +34,12 @@ composer.phar update
  ```
 
 ## Using HTML2TEXT
+
+
+```php
+require __DIR__ . '/../vendor/autoload.php';
+use Docxpresso\HTML2TEXT as Parser;
+$html = '<p>A simple paragraph.</p>';
+$parser = new Parser\HTML2TEXT($html);
+echo $parser->plainText();
+```
