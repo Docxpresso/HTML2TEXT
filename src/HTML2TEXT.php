@@ -38,6 +38,45 @@ class HTML2TEXT
     private $_bold;
     
     /**
+     * Block type tags
+     * 
+     * @var array
+     * @access private
+     */
+    private $_blockTags = array(
+        'address' => true,
+        'article' => true,
+        'aside' => true,
+        'blockquote' => true,
+        'caption' => true,
+        'center' => true,
+        'dd' => true,
+        'div' => true,
+        'dt' => true,
+        'fieldset' => true,
+        'footer' => true,
+        'h1' => true,
+        'h2' => true,
+        'h3' => true,
+        'h4' => true,
+        'h5' => true,
+        'h6' => true,
+        'header' => true,
+        'hgroup' => true,
+        'hr' => true,
+        'li' => true,
+        'menu' => true,
+        'menuitem' => true,
+        'ol' => true,
+        'output' => true,
+        'p' => true,
+        'pre' => true,
+        'section' => true,
+        'table' => true,
+        'ul' => true,
+    );
+    
+    /**
      * chars used to separate cells in a table row
      * 
      * @var srting
@@ -369,6 +408,34 @@ class HTML2TEXT
                     $this->_parseChilds($node, $level);
                     $this->_text .= PHP_EOL;
                     break;
+                case 'div':
+                case 'address':
+                case 'article':
+                case 'aside':
+                case 'blockquote':
+                case 'caption':
+                case 'center':
+                case 'fieldset':
+                case 'footer':
+                case 'header':
+                case 'hgroup':
+                case 'menu':
+                case 'menuitem':
+                case 'output':
+                case 'pre':
+                case 'section':
+                    //we have to check if the block element is the first child
+                    $prevNode = $node->previousSibling;
+                    if (!empty($prevNode) && !isset($this->_blockTags[$prevNode->nodeName])) {
+                        $this->_text .= PHP_EOL;
+                    }
+                    $this->_parseChilds($node, $level);
+                    //we have to check if the block element has a sibling
+                    $nextNode = $node->nextSibling;
+                    if (!empty($nextNode)) {
+                        $this->_text .= PHP_EOL;
+                    }
+                    break;
                 case 'dt':
                     $this->_parseChilds($node, $level);
                     $this->_text .= PHP_EOL;
@@ -432,8 +499,7 @@ class HTML2TEXT
                     $this->_parseChilds($node, $level);
                     $nextNode = $node->nextSibling;
                     $nested = $node->parentNode;
-                    if (!$nextNode && 
-                        ($nested->nodeName == 'td' || $nested->nodeName == 'th' || $nested->nodeName == 'li')) {
+                    if (!$nextNode && isset($this->_blockTags[$nested->nodeName])) {
                         //do not add a carriage return
                     } else {
                         $this->_text .= $this->_newLine;
