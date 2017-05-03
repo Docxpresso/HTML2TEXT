@@ -33,3 +33,4 @@ You can then later update HTML2TEXT using composer:
 composer.phar update
  ```
 
+## Using HTML2TEXT

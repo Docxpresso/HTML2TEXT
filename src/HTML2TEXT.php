@@ -78,20 +78,20 @@ class HTML2TEXT
     private $_italics;
 	
     /**
-     * this array stores the required current list type
-     * 
-     * @var array
-     * @access private
-     */
-    private $_listType;
-	
-    /**
      * this array stores the required current list item numbering
      * 
      * @var array
      * @access private
      */
     private $_list;
+    
+    /**
+     * this array stores the required current list type
+     * 
+     * @var array
+     * @access private
+     */
+    private $_listType;
     
     /**
      * HTML string to be converted
@@ -101,7 +101,7 @@ class HTML2TEXT
      */
     private $_str;
 
-	/**
+    /**
      * chars used to indent list items
      * 
      * @var srting
@@ -189,6 +189,69 @@ class HTML2TEXT
     }
     
     /**
+     * generate the list "numberings"
+     *
+     * @param integer $level
+     * @return void
+     * @access private
+     */
+    private function _generateLI($level)
+    {
+        if (isset($this->_list[$level])) {
+            if (isset($this->_listType[$level])) {
+                $type = $this->_listType[$level];
+            } else {
+                $type = 'unordered';
+            }
+            if ($type == 'ordered') {
+                $this->_generateLIOrdered($level);
+            } else {
+                $this->_generateLIUnordered($level);
+            }
+        }	
+    }
+	
+    /**
+     * generate a particular numbering
+     *
+     * @param integer $level
+     * @return void
+     * @access private
+     */
+    private function _generateLIOrdered($level)
+    {
+        $chstr = '';
+        $order = count($this->_list[$level]);	
+        $chstr .= str_repeat($this->_tab, $level);
+        if ($level == 1) {
+            $chstr .= $order . '.';
+        } else {
+            $preorder = '';
+            for ($k = 1; $k < $level; $k++) {
+                $preorder .= count($this->_list[$k]) . '.';
+            }
+            $chstr .= $preorder . $order . '.';
+        }
+        $this->_text .= $chstr . ' ';
+    }
+	
+    /**
+     * generate a particular unorderd list item
+     *
+     * @param integer $level
+     * @return void
+     * @access private
+     */
+    private function _generateLIUnordered($level)
+    {
+        $chstr = '';
+        $order = count($this->_list[$level]);	
+        $chstr .= str_repeat($this->_tab, $level);
+        $chstr .= str_repeat('*', $level);
+        $this->_text .= $chstr . ' ';
+    }
+        
+    /**
      * checks if a string contains HTML code
      *
      * @param string $string
@@ -202,6 +265,24 @@ class HTML2TEXT
             return false;
         } else {
             return true;
+        }
+    }
+    
+    /**
+     * This method recursively parses nodes that are not list or HTML
+     *
+     * @param DOMNode $node
+     * @param integer $level
+     * @return void
+     * @access private
+     */
+    private function _parseChilds($node, $level)
+    {
+        if ($node->hasChildNodes()) {
+            $childs = $node->childNodes;
+            foreach ($childs as $child) {
+                $this->_parseHTMLNode($child, $level);
+            }
         }
     }
     
@@ -223,87 +304,6 @@ class HTML2TEXT
         $this->_domHTML->loadXML($this->_html);
         $root = $this->_domHTML->documentElement;
         $this->_parseHTMLNode($root);
-    }
-	
-	/**
-     * generate the list "numberings"
-     *
-     * @param integer $level
-     * @return void
-     * @access private
-     */
-    private function _generateLI($level)
-    {
-		if (isset($this->_list[$level])) {
-			if (isset($this->_listType[$level])) {
-				$type = $this->_listType[$level];
-			} else {
-				$type = 'unordered';
-			}
-			if ($type == 'ordered') {
-				$this->_generateLIOrdered($level);
-			} else {
-				$this->_generateLIUnordered($level);
-			}
-		}	
-	}
-	
-	/**
-     * generate a particular numbering
-     *
-     * @param integer $level
-     * @return void
-     * @access private
-     */
-    private function _generateLIOrdered($level)
-    {
-		$cadena = '';
-		$order = count($this->_list[$level]);	
-                $cadena .= str_repeat($this->_tab, $level);
-		if ($level == 1) {
-			$cadena .= $order . '.';
-		} else {
-			$preorder = '';
-			for ($k = 1; $k < $level; $k++) {
-				$preorder .= count($this->_list[$k]) . '.';
-			}
-			$cadena .= $preorder . $order . '.';
-		}
-		$this->_text .= $cadena . ' ';
-	}
-	
-	/**
-     * generate a particular unorderd list item
-     *
-	 * @param integer $level
-     * @return void
-     * @access private
-     */
-    private function _generateLIUnordered($level)
-    {
-		$cadena = '';
-		$order = count($this->_list[$level]);	
-		$cadena .= str_repeat($this->_tab, $level);
-		$cadena .= str_repeat('*', $level);
-		$this->_text .= $cadena . ' ';
-	}
-    
-    /**
-     * This method recursively parses nodes that are not list or HTML
-     *
-     * @param DOMNode $node
-	 * @param integer $level
-     * @return void
-     * @access private
-     */
-    private function _parseChilds($node, $level)
-    {
-		if ($node->hasChildNodes()) {
-			$childs = $node->childNodes;
-			foreach ($childs as $child) {
-				$this->_parseHTMLNode($child, $level);
-			}
-		}
     }
     
     /**
@@ -341,8 +341,8 @@ class HTML2TEXT
                         $this->_parseChilds($node, $level);
                         $this->_text .= $this->_bold;
                     } else {
-						$this->_parseChilds($node, $level);
-					}
+                        $this->_parseChilds($node, $level);
+                    }
                     break;
                 case 'br':
                     $this->_text .= PHP_EOL;
@@ -375,8 +375,8 @@ class HTML2TEXT
                         $this->_parseChilds($node, $level);
                         $this->_text .= $this->_italics;
                     } else {
-						$this->_parseChilds($node, $level);
-					}
+                        $this->_parseChilds($node, $level);
+                    }
                     break;
                 case 'img':
                     $alt = $node->getAttribute('alt');
