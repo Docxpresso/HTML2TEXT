@@ -47,14 +47,14 @@ echo $parser->plainText();
 
 You can override some of the default values by including an **options** array
 whenever you invoke the HTML2TEXT class. The following options are available:
-- **bold**: a string of chars that will wrap text in <b> or <strong>. The
-default value is an empty string.
+- **bold**: a string of chars that will wrap text in __b__ or __strong__ tags.
+The default value is an empty string.
 - **cellSeparator**: a string of chars used to separate content between
 contiguous cells in a row. Default value is " || " (\t may be also
 a sensible choice)
 - **images**: if set to true the alt value associated to the image will
 be printed like [img: alt value]. Default value is true.
-- **italics**: a string of chars that will wrap text in <i> or <em>. The
+- **italics**: a string of chars that will wrap text in __i__ or __em__ tags. The
 default value is an empty string.
 - **newLine**: if set it will replace the default value (\n\r) for titles
 and paragraphs.
