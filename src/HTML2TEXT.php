@@ -5,7 +5,7 @@ namespace Docxpresso\HTML2TEXT;
 /**
  * Description: HTML to plain text converter
  * URI: http://www.docxpresso.com
- * Version: 1.0
+ * Version: 1.1
  * Author: No-nonsense Labs
  * License: MIT
  * Copyright 2017 No-nonsense Labs
