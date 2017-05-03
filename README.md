@@ -35,6 +35,7 @@ composer.phar update
 
 ## Using HTML2TEXT
 
+The use of HTML2TEXT is extremely simple:
 
 ```php
 require __DIR__ . '/../vendor/autoload.php';
@@ -43,3 +44,19 @@ $html = '<p>A simple paragraph.</p>';
 $parser = new Parser\HTML2TEXT($html);
 echo $parser->plainText();
 ```
+
+You can override some of the default values by including an **options** array
+whenever you invoke the HTML2TEXT class. The following options are available:
+- **bold**: a string of chars that will wrap text in <b> or <strong>. The
+default value is an empty string.
+- **cellSeparator**: a string of chars used to separate content between
+contiguous cells in a row. Default value is " || " (\t may be also
+a sensible choice)
+- **images**: if set to true the alt value associated to the image will
+be printed like [img: alt value]. Default value is true.
+- **italics**: a string of chars that will wrap text in <i> or <em>. The
+default value is an empty string.
+- **newLine**: if set it will replace the default value (\n\r) for titles
+and paragraphs.
+- **tab**: a string of chars that will be used like a "tab". The default
+value is "   " (\t may be another standard option)
