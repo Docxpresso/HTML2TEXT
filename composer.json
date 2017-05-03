@@ -1,0 +1,25 @@
+{
+    "name": "docxpresso/html2text",
+    "description": "A simple package that converts HTML into plain text using DOM methods",
+    "keywords": ["HTML", "text", "txt", "DOM"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eduardo Ramos",
+            "email": "eduardo@docxpresso.com",
+            "homepage": "http://www.docxpresso.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+		"ext-zip": "*",
+		"ext-tidy": "*",
+		"lib-libxml": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Docxpresso\\HTML2TEXT\\": "src/"
+        }
+    }
+}
