@@ -5,7 +5,7 @@ namespace Docxpresso\HTML2TEXT;
 /**
  * Description: HTML to plain text converter
  * URI: http://www.docxpresso.com
- * Version: 1.1
+ * Version: 1.0
  * Author: No-nonsense Labs
  * License: MIT
  * Copyright 2017 No-nonsense Labs
@@ -73,6 +73,8 @@ class HTML2TEXT
         'pre' => true,
         'section' => true,
         'table' => true,
+        'td' => true,
+        'th' => true,
         'ul' => true,
     );
     
@@ -164,6 +166,13 @@ class HTML2TEXT
     private $_text;
     
     /**
+     * title formatting
+     * 
+     * @var string
+     */
+    private $_titles;
+    
+    /**
      * constructor
      *
      * @param string $str
@@ -180,7 +189,8 @@ class HTML2TEXT
      *      newLine: if set it will replace the default value (\n\r) for titles
      *      and paragraphs.
      *      tab: a string of chars that will be used like a "tab". The default
-     *      value is "   " (\t may be another standard option)
+     *      value is "   " (\t may be another standard option).
+     *      titles: it can be "underline" (default), "uppercase" or "none".
      * 
      */
     public function __construct($str, $options = array()) {
@@ -214,6 +224,11 @@ class HTML2TEXT
             $this->_images = $options['images'];
         } else {
             $this->_images = true;
+        }
+        if (isset($options['titles'])) {
+            $this->_titles = $options['titles'];
+        } else {
+            $this->_titles = 'underline';
         }
     }
     
@@ -358,6 +373,10 @@ class HTML2TEXT
         $this->_domHTML->preserveWhiteSpace = true;
         $this->_domHTML->formatOutput = false;
         $this->_domHTML->loadXML($this->_html);
+        //if titles are to be in uppercase we have to preparse the HTML string
+        if ($this->_titles == 'uppercase') {
+            $this->_str = $this->_titlesToUppercase();
+        }
         $root = $this->_domHTML->documentElement;
         $this->_parseHTMLNode($root);
     }
@@ -383,7 +402,7 @@ class HTML2TEXT
         } else {
             switch ($tag) {
                 case '#text':
-                    $this->_text .= $node->nodeValue;
+						$this->_text .= $node->nodeValue;
                     break;
                 case 'a':
                     $href = $node->getAttribute('href');
@@ -449,8 +468,10 @@ class HTML2TEXT
                     $this->_parseChilds($node, $level);
                     $numChars = strlen($node->nodeValue);
                     $this->_text .= PHP_EOL;
-                    $this->_text .= str_repeat("=", $numChars);
-                    $this->_text .= $this->_newLine;
+                        if ($this->_titles == 'underline') {
+                                $this->_text .= str_repeat("=", $numChars);
+                                $this->_text .= $this->_newLine;
+                        }
                     break;
                 case 'i':
                 case 'em':
@@ -565,6 +586,41 @@ class HTML2TEXT
         catch(Exception $e){
             $this->_html = 'error';
             throw new Exception('Tidy threw a fatal error.');
+        }
+    }
+    
+    /**
+     * transform titles to uppercase
+     *
+     * @return void
+     * @access private
+     */
+    private function _titlesToUppercase()
+    {
+        for ($j = 1; $j < 7; $j++ ) {
+            $titles = $this->_domHTML->getElementsByTagName('h' . $j);
+            foreach ($titles as $title){
+                $this->_titleToUpper($title);
+            }
+        }
+    }
+    
+    /**
+     * transform a single title recursively to uppercase
+     *
+     * @param DOMNode $node
+     * @return void
+     * @access private
+     */
+    private function _titleToUpper($node)
+    {
+        $childs = $node->childNodes;
+        foreach ($childs as $child) {
+            if ($child->nodeType == 1) {
+                $this->_titleToUpper($child);
+            } else if ($child->nodeType == 3) {
+                $node->nodeValue = strtoupper($node->nodeValue);
+            }
         }
     }
 
