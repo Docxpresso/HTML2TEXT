@@ -5,6 +5,8 @@ HTML2TEXT is a single class PHP package that converts HTML into plain text.
 It uses DOM methods rather than regular expressions and although it works out of
 the box it can be easily further customized to suit any particular need.
 
+You can visit the official page in [Docxpresso](http://www.docxpresso.com/documentation-api/html2text).
+
 ## Installing HTML2TEXT
 
 The recommended way to install HTML2TEXT is through
@@ -60,3 +62,4 @@ default value is an empty string.
 and paragraphs.
 - **tab**: a string of chars that will be used like a "tab". The default
 value is "   " (\t may be another standard option)
+- **titles**: it can be "underline" (default), "uppercase" or "none".
